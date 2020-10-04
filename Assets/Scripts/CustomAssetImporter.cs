@@ -7,21 +7,32 @@ public class CustomAssetImporter : AssetPostprocessor
 {
     void OnPreprocessAudio()
     {
-        // Audio Settings
+        ImportProperties importProperties = (ImportProperties)AssetDatabase.LoadAssetAtPath("Assets/Prefabs/ImportProperties.prefab", typeof(ImportProperties));
         AudioImporter audioImporter = assetImporter as AudioImporter;
         var a = audioImporter.defaultSampleSettings;
-        a.compressionFormat = AudioCompressionFormat.PCM; // Can't be set to a format that Unity doesn't have
-        a.sampleRateSetting = AudioSampleRateSetting.OptimizeSampleRate;
-        a.loadType = AudioClipLoadType.CompressedInMemory;
+        a.compressionFormat = importProperties.audioCompressionFormat;
+        a.sampleRateSetting = importProperties.audioSampleRateSetting;
+        a.loadType = importProperties.audioClipLoadType;
+
+        // Override Android Import Settings
+        if (importProperties.overrideAudioForAndroid) {
+
+            AudioImporterSampleSettings settings = new AudioImporterSampleSettings();
+            settings.compressionFormat = importProperties.audioCompressionFormatForAndroid;
+            settings.sampleRateSetting = importProperties.audioSampleRateSettingForAndroid;
+            settings.loadType = importProperties.audioClipLoadTypeForAndroid;
+
+            audioImporter.SetOverrideSampleSettings("Android", settings);
+        }
     }
 
     void OnPreprocessTexture()
     {
         ImportProperties importProperties = (ImportProperties)AssetDatabase.LoadAssetAtPath("Assets/Prefabs/ImportProperties.prefab", typeof(ImportProperties));
         TextureImporter textureImporter = assetImporter as TextureImporter;
-        if (importProperties)
+        if (importProperties && importProperties.maxTextureSizeSelected > 0)
         {
-            textureImporter.maxTextureSize = importProperties.textureSize;
+            textureImporter.maxTextureSize = importProperties.maxTextureSizeSelected;
 
             if (importProperties.overrideTexturesForAndroid)
             {
