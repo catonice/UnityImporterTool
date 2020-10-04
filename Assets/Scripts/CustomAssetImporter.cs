@@ -14,9 +14,11 @@ public class CustomAssetImporter : AssetPostprocessor
         a.sampleRateSetting = importProperties.audioSampleRateSetting;
         a.loadType = importProperties.audioClipLoadType;
 
-        // Override Android Import Settings
-        if (importProperties.overrideAudioForAndroid) {
+        audioImporter.defaultSampleSettings = a;
 
+        // Override Android Import Settings
+        if (importProperties.overrideAudioForAndroid)
+        {
             AudioImporterSampleSettings settings = new AudioImporterSampleSettings();
             settings.compressionFormat = importProperties.audioCompressionFormatForAndroid;
             settings.sampleRateSetting = importProperties.audioSampleRateSettingForAndroid;
@@ -30,12 +32,21 @@ public class CustomAssetImporter : AssetPostprocessor
     {
         ImportProperties importProperties = (ImportProperties)AssetDatabase.LoadAssetAtPath("Assets/Prefabs/ImportProperties.prefab", typeof(ImportProperties));
         TextureImporter textureImporter = assetImporter as TextureImporter;
-        if (importProperties && importProperties.maxTextureSizeSelected > 0)
+
+        if (importProperties)
         {
-            textureImporter.maxTextureSize = importProperties.maxTextureSizeSelected;
+            if (importProperties.maxTextureSizeSelected > 0)
+            {
+                textureImporter.maxTextureSize = importProperties.maxTextureSizeSelected;
+            }
 
             if (importProperties.overrideTexturesForAndroid)
             {
+                TextureImporterPlatformSettings androidSettings = textureImporter.GetPlatformTextureSettings("Android");
+                androidSettings.overridden = true;
+                androidSettings.maxTextureSize = importProperties.maxTextureSizeSelectedForAndroid;
+                textureImporter.SetPlatformTextureSettings(androidSettings);
+
                 Debug.Log("Override Android");
             }
         }
@@ -43,27 +54,24 @@ public class CustomAssetImporter : AssetPostprocessor
 
     void OnPostprocessTexture(Texture2D texture)
     {
-        //texture.minimumMipmapLevel = 1;
-        // Only post process textures if they are in a folder
-        // "invert color" or a sub folder of it.
-        /*string lowerCaseAssetPath = assetPath.ToLower();
-        if (lowerCaseAssetPath.IndexOf("/invert color/") == -1)
-            return;
-*/
-       /* for (int m = 0; m < texture.mipmapCount; m++)
-        {
-            Color[] c = texture.GetPixels(m);
+        ImportProperties importProperties = (ImportProperties)AssetDatabase.LoadAssetAtPath("Assets/Prefabs/ImportProperties.prefab", typeof(ImportProperties));
+        TextureImporter textureImporter = assetImporter as TextureImporter;
 
-            for (int i = 0; i < c.Length; i++)
+        if (importProperties)
+        {
+            // TODO: Figure out setting mip map levels for platforms
+            if (importProperties.mipMapLevel >= 0)
             {
-                c[i].r = 1 - c[i].r;
-                c[i].g = 1 - c[i].g;
-                c[i].b = 1 - c[i].b;
+                texture.requestedMipmapLevel = importProperties.mipMapLevel;
             }
-            texture.SetPixels(c, m);
-        }*/
-        // Instead of setting pixels for each mip map levels, you can also
-        // modify only the pixels in the highest mip level. And then simply use
-        // texture.Apply(true); to generate lower mip levels.
+
+            if (importProperties.overrideTexturesForAndroid && importProperties.mipMapLevelForAndroid >= 0)
+            {
+                TextureImporterPlatformSettings androidSettings = textureImporter.GetPlatformTextureSettings("Android");
+                androidSettings.overridden = true;
+                
+                textureImporter.SetPlatformTextureSettings(androidSettings);
+            }
+        }
     }
 }

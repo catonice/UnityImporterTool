@@ -7,11 +7,11 @@ public class ImportProperties : MonoBehaviour
 {
     // Texture Settings
     public int maxTextureSizeSelected = 0;
-    public float mipMapLevel = 0;
+    public int mipMapLevel = 0;
 
     // Android Texture Settings
     public bool overrideTexturesForAndroid = true;
-    public float androidMipMapLevel = 0;
+    public int mipMapLevelForAndroid = 0;
     public int maxTextureSizeSelectedForAndroid = 0;
 
     // Audio Settings

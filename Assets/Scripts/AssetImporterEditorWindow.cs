@@ -10,11 +10,12 @@ class AssetImporterEditorWindow : EditorWindow
 
     // Texture Settings
     int maxTextureSizeSelected = 0;
-    float mipMapLevel = 0;
+    int mipMapLevel = 0;
+
     // Android Texture Settings
     bool overrideTexturesForAndroid = true;
-    float androidMipMapLevel = 0;
     int maxTextureSizeSelectedForAndroid = 0;
+    int mipMapLevelForAndroid = 0;
 
     // Audio Settings
     AudioCompressionFormat audioCompressionFormat;
@@ -41,17 +42,17 @@ class AssetImporterEditorWindow : EditorWindow
     {
         // Basic Editor Setup
         EditorGUILayout.BeginVertical();
-        scrollPos = EditorGUILayout.BeginScrollView(scrollPos, GUILayout.Height(500));
+        scrollPos = EditorGUILayout.BeginScrollView(scrollPos, GUILayout.Height(300));
 
         // Texture Settings
         GUILayout.Label("Texture Import Settings", EditorStyles.boldLabel);
         maxTextureSizeSelected = EditorGUILayout.Popup("Max Texture Size", maxTextureSizeSelected, maxTextureSizes);
-        //mipMapLevel = EditorGUILayout.Slider("Mip Map Level", mipMapLevel, 1, 8192);
+        mipMapLevel = EditorGUILayout.IntField("Mip Map Level", mipMapLevel);
 
         // Android Overrides
         overrideTexturesForAndroid = EditorGUILayout.BeginToggleGroup("Override Texture Settings For Android", overrideTexturesForAndroid);
         maxTextureSizeSelectedForAndroid = EditorGUILayout.Popup("Max Texture Size", maxTextureSizeSelectedForAndroid, maxTextureSizes);
-        androidMipMapLevel = EditorGUILayout.Slider("Mip Map Level", androidMipMapLevel, 1, 8192);
+        mipMapLevelForAndroid = EditorGUILayout.IntField("Mip Map Level", mipMapLevelForAndroid);
         EditorGUILayout.EndToggleGroup();
 
         // Audio Settings
