@@ -8,33 +8,38 @@ public class CustomAssetImporter : AssetPostprocessor
     void OnPreprocessAudio()
     {
         ImportProperties importProperties = (ImportProperties)AssetDatabase.LoadAssetAtPath("Assets/Prefabs/ImportProperties.prefab", typeof(ImportProperties));
-        AudioImporter audioImporter = assetImporter as AudioImporter;
-        var a = audioImporter.defaultSampleSettings;
-        a.compressionFormat = importProperties.audioCompressionFormat;
-        a.sampleRateSetting = importProperties.audioSampleRateSetting;
-        a.loadType = importProperties.audioClipLoadType;
 
-        audioImporter.defaultSampleSettings = a;
-
-        // Override Android Import Settings
-        if (importProperties.overrideAudioForAndroid)
+        if (importProperties && importProperties.enableCustomImportSetting)
         {
-            AudioImporterSampleSettings settings = new AudioImporterSampleSettings();
-            settings.compressionFormat = importProperties.audioCompressionFormatForAndroid;
-            settings.sampleRateSetting = importProperties.audioSampleRateSettingForAndroid;
-            settings.loadType = importProperties.audioClipLoadTypeForAndroid;
+            AudioImporter audioImporter = assetImporter as AudioImporter;
+            var a = audioImporter.defaultSampleSettings;
+            a.compressionFormat = importProperties.audioCompressionFormat;
+            a.sampleRateSetting = importProperties.audioSampleRateSetting;
+            a.loadType = importProperties.audioClipLoadType;
 
-            audioImporter.SetOverrideSampleSettings("Android", settings);
+            audioImporter.defaultSampleSettings = a;
+
+            // Override Android Import Settings
+            if (importProperties.overrideAudioForAndroid)
+            {
+                AudioImporterSampleSettings settings = new AudioImporterSampleSettings();
+                settings.compressionFormat = importProperties.audioCompressionFormatForAndroid;
+                settings.sampleRateSetting = importProperties.audioSampleRateSettingForAndroid;
+                settings.loadType = importProperties.audioClipLoadTypeForAndroid;
+
+                audioImporter.SetOverrideSampleSettings("Android", settings);
+            }
         }
     }
 
     void OnPreprocessTexture()
     {
         ImportProperties importProperties = (ImportProperties)AssetDatabase.LoadAssetAtPath("Assets/Prefabs/ImportProperties.prefab", typeof(ImportProperties));
-        TextureImporter textureImporter = assetImporter as TextureImporter;
 
-        if (importProperties)
+        if (importProperties && importProperties.enableCustomImportSetting)
         {
+            TextureImporter textureImporter = assetImporter as TextureImporter;
+
             if (importProperties.maxTextureSizeSelected > 0)
             {
                 textureImporter.maxTextureSize = importProperties.maxTextureSizeSelected;
@@ -55,11 +60,11 @@ public class CustomAssetImporter : AssetPostprocessor
     void OnPostprocessTexture(Texture2D texture)
     {
         ImportProperties importProperties = (ImportProperties)AssetDatabase.LoadAssetAtPath("Assets/Prefabs/ImportProperties.prefab", typeof(ImportProperties));
-        TextureImporter textureImporter = assetImporter as TextureImporter;
 
-        if (importProperties)
+        if (importProperties && importProperties.enableCustomImportSetting)
         {
-            // TODO: Figure out setting mip map levels for platforms
+            TextureImporter textureImporter = assetImporter as TextureImporter;
+            // TODO: Figure out setting mip map levels for android platform
             if (importProperties.mipMapLevel >= 0)
             {
                 texture.requestedMipmapLevel = importProperties.mipMapLevel;

@@ -8,6 +8,8 @@ class AssetImporterEditorWindow : EditorWindow
 {
     Vector2 scrollPos;
 
+    bool enableCustomImportSettings = false;
+
     // Texture Settings
     int maxTextureSizeSelected = 0;
     int mipMapLevel = 0;
@@ -40,16 +42,33 @@ class AssetImporterEditorWindow : EditorWindow
     }
     private void OnGUI()
     {
+        // Grabbing game object which holds configuration
+        ImportProperties importProperties = (ImportProperties)AssetDatabase.LoadAssetAtPath("Assets/Prefabs/ImportProperties.prefab", typeof(ImportProperties));
+
         // Basic Editor Setup
         EditorGUILayout.BeginVertical();
         scrollPos = EditorGUILayout.BeginScrollView(scrollPos, GUILayout.Height(300));
+
+        // Boolean For Applying Editor Props
+        GUILayout.Label("Enable Custom Import Settings", EditorStyles.boldLabel);
+        enableCustomImportSettings = EditorGUILayout.Toggle("Enable Custom Import Settings", enableCustomImportSettings);
+
+        // Add toggle for if user wants to apply their own import settings
+        if (enableCustomImportSettings)
+        {
+            importProperties.enableCustomImportSetting = enableCustomImportSettings;
+        }
+        else
+        {
+            importProperties.enableCustomImportSetting = enableCustomImportSettings;
+        }
 
         // Texture Settings
         GUILayout.Label("Texture Import Settings", EditorStyles.boldLabel);
         maxTextureSizeSelected = EditorGUILayout.Popup("Max Texture Size", maxTextureSizeSelected, maxTextureSizes);
         mipMapLevel = EditorGUILayout.IntField("Mip Map Level", mipMapLevel);
 
-        // Android Overrides
+        // Android Texture Overrides
         overrideTexturesForAndroid = EditorGUILayout.BeginToggleGroup("Override Texture Settings For Android", overrideTexturesForAndroid);
         maxTextureSizeSelectedForAndroid = EditorGUILayout.Popup("Max Texture Size", maxTextureSizeSelectedForAndroid, maxTextureSizes);
         mipMapLevelForAndroid = EditorGUILayout.IntField("Mip Map Level", mipMapLevelForAndroid);
@@ -61,6 +80,7 @@ class AssetImporterEditorWindow : EditorWindow
         audioSampleRateSetting = (AudioSampleRateSetting)EditorGUILayout.EnumPopup("Audio Sample Rate Setting", audioSampleRateSetting);
         audioClipLoadType = (AudioClipLoadType)EditorGUILayout.EnumPopup("Audio Clip Load Type", audioClipLoadType);
 
+        // Android Audio Overrides
         overrideAudioForAndroid = EditorGUILayout.BeginToggleGroup("Override Audio Settings For Android", overrideAudioForAndroid);
         audioCompressionFormatForAndroid = (AudioCompressionFormat)EditorGUILayout.EnumPopup("Audio Compression Format", audioCompressionFormatForAndroid);
         audioSampleRateSettingForAndroid = (AudioSampleRateSetting)EditorGUILayout.EnumPopup("Audio Sample Rate Setting", audioSampleRateSettingForAndroid);
@@ -70,11 +90,10 @@ class AssetImporterEditorWindow : EditorWindow
         EditorGUILayout.EndScrollView();
         EditorGUILayout.EndVertical();
 
-        bool buttonWasPressed = GUILayout.Button("Assign Import Settings");
+        bool assignImportSettingsButton = GUILayout.Button("Assign Import Settings");
 
-        if (buttonWasPressed)
+        if (assignImportSettingsButton)
         {
-            ImportProperties importProperties = (ImportProperties)AssetDatabase.LoadAssetAtPath("Assets/Prefabs/ImportProperties.prefab", typeof(ImportProperties));
             if (importProperties)
             {
                 // Texture Settings

@@ -5,6 +5,8 @@ using UnityEngine;
 
 public class ImportProperties : MonoBehaviour
 {
+    public bool enableCustomImportSetting = false;
+
     // Texture Settings
     public int maxTextureSizeSelected = 0;
     public int mipMapLevel = 0;
@@ -24,5 +26,4 @@ public class ImportProperties : MonoBehaviour
     public AudioCompressionFormat audioCompressionFormatForAndroid;
     public AudioSampleRateSetting audioSampleRateSettingForAndroid;
     public AudioClipLoadType audioClipLoadTypeForAndroid;
-
 }
